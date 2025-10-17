@@ -76,6 +76,39 @@ def save_diff_file(repo_dir, pr_number, filename, patch):
     path = os.path.join(pr_dir, f"{safe_name}.diff")
     with open(path, "w", encoding="utf-8") as f:
         f.write(patch)
+def save_pr_metadata(repo_dir, pr_number, pr):
+    pr_dir = os.path.join(repo_dir, f"PR_{pr_number}")
+    os.makedirs(pr_dir, exist_ok=True)
+    path = os.path.join(pr_dir, "PR_metadata.txt")
+    
+    created_at = pr.get("created_at")
+    merged_at = pr.get("merged_at")
+    if created_at and merged_at:
+        created_dt = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ")
+        merged_dt = datetime.strptime(merged_at, "%Y-%m-%dT%H:%M:%SZ")
+        time_to_merge = merged_dt - created_dt
+    else:
+        time_to_merge = "Not merged"
+    
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(f"Number: {pr.get('number')}\n")
+        f.write(f"Title: {pr.get('title')}\n")
+        f.write(f"Author: {pr.get('user', {}).get('login')}\n")
+        f.write(f"State: {pr.get('state')}\n")
+        f.write(f"Locked: {pr.get('locked')}\n")
+        f.write(f"Created at: {created_at}\n")
+        f.write(f"Updated at: {pr.get('updated_at')}\n")
+        f.write(f"Closed at: {pr.get('closed_at')}\n")
+        f.write(f"Merged at: {merged_at}\n")
+        f.write(f"Merged by: {pr.get('merged_by', {}).get('login')}\n")
+        f.write(f"Time to merge: {time_to_merge}\n")
+        f.write(f"Commits: {pr.get('commits')}\n")
+        f.write(f"Additions: {pr.get('additions')}\n")
+        f.write(f"Deletions: {pr.get('deletions')}\n")
+        f.write(f"Changed files: {pr.get('changed_files')}\n")
+        f.write(f"Comments: {pr.get('comments')}\n")
+        f.write(f"Review comments: {pr.get('review_comments')}\n")
+
 
 def main():
     repos = get_top_java_repos(top_n=MAX_REPOS, min_stars=MIN_STARS)
@@ -87,6 +120,7 @@ def main():
             prs = get_pull_requests(owner, repo)
             for pr in tqdm(prs, desc=f"{repo} PRs"):
                 pr_number = pr["number"]
+                save_pr_metadata(repo_dir, pr_number, pr)
                 files = get_pr_files(owner, repo, pr_number)
                 for f in files:
                     patch = f.get("patch")

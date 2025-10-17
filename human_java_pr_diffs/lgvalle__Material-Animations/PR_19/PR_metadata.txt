@@ -1,0 +1,17 @@
+Number: 19
+Title: Avoid a bug in Gradle
+Author: Nivl
+State: closed
+Locked: False
+Created at: 2015-09-26T20:36:47Z
+Updated at: 2015-10-05T15:57:09Z
+Closed at: 2015-10-05T15:57:09Z
+Merged at: 2015-10-05T15:57:09Z
+Merged by: None
+Time to merge: 8 days, 19:20:22
+Commits: None
+Additions: None
+Deletions: None
+Changed files: None
+Comments: None
+Review comments: None

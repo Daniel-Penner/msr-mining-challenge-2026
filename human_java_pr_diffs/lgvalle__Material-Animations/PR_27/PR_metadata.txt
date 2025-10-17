@@ -1,0 +1,17 @@
+Number: 27
+Title: Fix gradle for up-to-date build version
+Author: BattleShipPark
+State: closed
+Locked: False
+Created at: 2015-12-17T02:09:59Z
+Updated at: 2016-01-18T15:04:24Z
+Closed at: 2016-01-18T15:04:24Z
+Merged at: 2016-01-18T15:04:24Z
+Merged by: None
+Time to merge: 32 days, 12:54:25
+Commits: None
+Additions: None
+Deletions: None
+Changed files: None
+Comments: None
+Review comments: None

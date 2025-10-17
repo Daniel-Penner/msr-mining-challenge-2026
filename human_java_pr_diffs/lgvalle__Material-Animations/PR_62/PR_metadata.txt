@@ -1,0 +1,17 @@
+Number: 62
+Title: Update for Android Studio 3.3
+Author: 1951FDG
+State: open
+Locked: False
+Created at: 2019-01-22T12:24:59Z
+Updated at: 2019-01-22T12:24:59Z
+Closed at: None
+Merged at: None
+Merged by: None
+Time to merge: Not merged
+Commits: None
+Additions: None
+Deletions: None
+Changed files: None
+Comments: None
+Review comments: None

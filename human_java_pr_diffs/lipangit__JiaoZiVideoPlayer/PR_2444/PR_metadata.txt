@@ -1,0 +1,17 @@
+Number: 2444
+Title: Merge pull request #1 from lipangit/develop
+Author: zqlq4ever
+State: closed
+Locked: True
+Created at: 2019-05-29T08:16:20Z
+Updated at: 2019-05-29T08:17:12Z
+Closed at: 2019-05-29T08:17:12Z
+Merged at: None
+Merged by: None
+Time to merge: Not merged
+Commits: None
+Additions: None
+Deletions: None
+Changed files: None
+Comments: None
+Review comments: None

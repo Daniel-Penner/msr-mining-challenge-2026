@@ -1,0 +1,17 @@
+Number: 35
+Title: Update dependencies 23.3.0, gradle version 2.12 and Android Studio 2.0.0
+Author: JeppeLeth
+State: open
+Locked: False
+Created at: 2016-03-25T20:38:16Z
+Updated at: 2018-03-14T10:23:53Z
+Closed at: None
+Merged at: None
+Merged by: None
+Time to merge: Not merged
+Commits: None
+Additions: None
+Deletions: None
+Changed files: None
+Comments: None
+Review comments: None

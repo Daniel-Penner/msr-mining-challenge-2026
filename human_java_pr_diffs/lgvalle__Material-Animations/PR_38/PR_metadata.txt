@@ -1,0 +1,17 @@
+Number: 38
+Title: Talk samples
+Author: Juliozen
+State: closed
+Locked: False
+Created at: 2016-05-09T18:12:32Z
+Updated at: 2016-05-09T18:13:02Z
+Closed at: 2016-05-09T18:13:02Z
+Merged at: None
+Merged by: None
+Time to merge: Not merged
+Commits: None
+Additions: None
+Deletions: None
+Changed files: None
+Comments: None
+Review comments: None

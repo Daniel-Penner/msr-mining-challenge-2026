@@ -1,0 +1,17 @@
+Number: 37
+Title: add missing brace in README.md
+Author: KirillMakarov
+State: open
+Locked: False
+Created at: 2016-04-23T21:35:14Z
+Updated at: 2016-04-23T21:35:14Z
+Closed at: None
+Merged at: None
+Merged by: None
+Time to merge: Not merged
+Commits: None
+Additions: None
+Deletions: None
+Changed files: None
+Comments: None
+Review comments: None

@@ -1,0 +1,17 @@
+Number: 2219
+Title: add korean(South Korea) language
+Author: kslr
+State: closed
+Locked: True
+Created at: 2018-11-30T10:43:15Z
+Updated at: 2019-05-27T11:38:00Z
+Closed at: 2018-11-30T11:24:27Z
+Merged at: 2018-11-30T11:24:27Z
+Merged by: None
+Time to merge: 0:41:12
+Commits: None
+Additions: None
+Deletions: None
+Changed files: None
+Comments: None
+Review comments: None

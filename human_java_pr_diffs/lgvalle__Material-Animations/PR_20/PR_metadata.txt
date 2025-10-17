@@ -1,0 +1,17 @@
+Number: 20
+Title: Correct slide setDuration
+Author: alorma
+State: closed
+Locked: False
+Created at: 2015-10-02T18:55:32Z
+Updated at: 2015-10-02T18:56:34Z
+Closed at: 2015-10-02T18:56:34Z
+Merged at: None
+Merged by: None
+Time to merge: Not merged
+Commits: None
+Additions: None
+Deletions: None
+Changed files: None
+Comments: None
+Review comments: None

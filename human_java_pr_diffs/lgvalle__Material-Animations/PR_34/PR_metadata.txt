@@ -1,0 +1,17 @@
+Number: 34
+Title: Disable clip to padding for row items to avoid clipped transition animation
+Author: JeppeLeth
+State: closed
+Locked: False
+Created at: 2016-03-25T20:36:11Z
+Updated at: 2016-05-19T20:29:54Z
+Closed at: 2016-05-15T17:30:33Z
+Merged at: 2016-05-15T17:30:33Z
+Merged by: None
+Time to merge: 50 days, 20:54:22
+Commits: None
+Additions: None
+Deletions: None
+Changed files: None
+Comments: None
+Review comments: None

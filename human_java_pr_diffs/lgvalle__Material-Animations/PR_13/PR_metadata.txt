@@ -1,0 +1,17 @@
+Number: 13
+Title: Recyclerview examples
+Author: lgvalle
+State: closed
+Locked: False
+Created at: 2015-09-13T20:39:37Z
+Updated at: 2015-09-13T20:39:50Z
+Closed at: 2015-09-13T20:39:50Z
+Merged at: 2015-09-13T20:39:50Z
+Merged by: None
+Time to merge: 0:00:13
+Commits: None
+Additions: None
+Deletions: None
+Changed files: None
+Comments: None
+Review comments: None
