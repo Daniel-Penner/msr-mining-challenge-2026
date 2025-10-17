@@ -1,0 +1,18 @@
+@@ -47,7 +47,7 @@ public void prepare() {
+         ijkMediaPlayer.setOnTimedTextListener(JZMediaIjkplayer.this);
+ 
+         try {
+-            ijkMediaPlayer.setDataSource(currentDataSource.toString());
++            ijkMediaPlayer.setDataSource(currentPath.toString());
+             ijkMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+             ijkMediaPlayer.setScreenOnWhilePlaying(true);
+             ijkMediaPlayer.prepareAsync();
+@@ -100,7 +100,7 @@ public void setVolume(float leftVolume, float rightVolume) {
+     @Override
+     public void onPrepared(IMediaPlayer iMediaPlayer) {
+         ijkMediaPlayer.start();
+-        if (currentDataSource.toString().toLowerCase().contains("mp3")) {
++        if (currentPath.toString().toLowerCase().contains("mp3")) {
+             JZMediaManager.instance().mainThreadHandler.post(new Runnable() {
+                 @Override
+                 public void run() {

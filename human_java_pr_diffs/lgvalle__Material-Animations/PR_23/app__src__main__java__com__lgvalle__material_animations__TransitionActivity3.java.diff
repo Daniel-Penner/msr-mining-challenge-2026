@@ -1,0 +1,17 @@
+@@ -39,6 +39,8 @@ private void setupWindowAnimations() {
+         }  else {
+             transition = TransitionInflater.from(this).inflateTransition(R.transition.slide_from_bottom);
+         }
++
++        TransitionHelper.excludeTargets(transition);
+         getWindow().setEnterTransition(transition);
+     }
+ 
+@@ -55,6 +57,7 @@ private Visibility buildEnterTransition() {
+         Slide enterTransition = new Slide();
+         enterTransition.setDuration(getResources().getInteger(R.integer.anim_duration_long));
+         enterTransition.setSlideEdge(Gravity.RIGHT);
++        TransitionHelper.excludeTargets(enterTransition);
+         return enterTransition;
+     }
+ 

@@ -1,0 +1,25 @@
+@@ -15,7 +15,7 @@ Animate existing activity layout **content** (non-hero views)
+ 
+ You can define these transitions **declarative** using XML 
+ 
+-> res/transation/activity_explode.xml
++> res/transition/activity_explode.xml
+ 
+ ```xml
+ <?xml version="1.0" encoding="utf-8"?>
+@@ -201,7 +201,7 @@ Just that code will produce this beautiful transition animation:
+ 
+ ![a to b with shared element](https://raw.githubusercontent.com/lgvalle/Material-Animations/master/screenshots/transition-shared-elements.gif)
+ 
+-As you can see, Transition framework is creating and executing an animation to create the ilusion that the view is moving and changing shape.
++As you can see, Transition framework is creating and executing an animation to create the illusion that the view is moving and changing shape.
+ 
+ To proof the blue square view is not really _moving_ we can do this quick exercise: change transitioName in DetailsActivity from Big Blue Square to the Title Text above it.
+ 
+@@ -279,4 +279,4 @@ This will change those views width attribute to make it larger. That will trigge
+ 
+   * Alex Lockwood posts about transitions in Lollipop. A great in deep into this topic: [http://www.androiddesignpatterns.com/2014/12/activity-fragment-transitions-in-android-lollipop-part1.html](http://www.androiddesignpatterns.com/2014/12/activity-fragment-transitions-in-android-lollipop-part1.html)
+   * Very complete repository with examples by Saul Molinero: [https://github.com/saulmm/Android-Material-Examples](https://github.com/saulmm/Android-Material-Examples)
+-  * Chet Hasse video explaining Transition framework: [https://www.youtube.com/watch?v=S3H7nJ4QaD8](https://www.youtube.com/watch?v=S3H7nJ4QaD8)
+\ No newline at end of file
++  * Chet Hasse video explaining Transition framework: [https://www.youtube.com/watch?v=S3H7nJ4QaD8](https://www.youtube.com/watch?v=S3H7nJ4QaD8)

@@ -1,0 +1,32 @@
+@@ -10,26 +10,30 @@
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal"
+         android:layout_marginTop="8dp"
++        android:onClick="clickNormal"
+         android:text="Normal ListView" />
+ 
+     <Button
+         android:id="@+id/listview_fragment_viewpager"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal"
++        android:onClick="clickListViewFragmentViewpager"
+         android:text="ListView Fragment ViewPager" />
+ 
+     <Button
+         android:id="@+id/multiholder"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal"
++        android:onClick="clickMultiHolder"
+         android:text="Multi Holder ListView" />
+ 
+     <Button
+         android:id="@+id/recyleview"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal"
++        android:onClick="clickRecyclerView"
+         android:text="Recyleview" />
+ </LinearLayout>
+\ No newline at end of file
