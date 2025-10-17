@@ -9,9 +9,3 @@ Closed at: 2016-04-03T16:08:19Z
 Merged at: 2016-04-03T16:08:19Z
 Merged by: None
 Time to merge: 40 days, 0:01:48
-Commits: None
-Additions: None
-Deletions: None
-Changed files: None
-Comments: None
-Review comments: None

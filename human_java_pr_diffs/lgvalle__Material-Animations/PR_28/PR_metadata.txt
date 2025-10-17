@@ -9,9 +9,3 @@ Closed at: 2015-12-21T12:15:31Z
 Merged at: 2015-12-21T12:15:31Z
 Merged by: None
 Time to merge: 2 days, 2:35:12
-Commits: None
-Additions: None
-Deletions: None
-Changed files: None
-Comments: None
-Review comments: None

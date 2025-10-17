@@ -102,12 +102,7 @@ def save_pr_metadata(repo_dir, pr_number, pr):
         f.write(f"Merged at: {merged_at}\n")
         f.write(f"Merged by: {pr.get('merged_by', {}).get('login')}\n")
         f.write(f"Time to merge: {time_to_merge}\n")
-        f.write(f"Commits: {pr.get('commits')}\n")
-        f.write(f"Additions: {pr.get('additions')}\n")
-        f.write(f"Deletions: {pr.get('deletions')}\n")
-        f.write(f"Changed files: {pr.get('changed_files')}\n")
-        f.write(f"Comments: {pr.get('comments')}\n")
-        f.write(f"Review comments: {pr.get('review_comments')}\n")
+        
 
 
 def main():

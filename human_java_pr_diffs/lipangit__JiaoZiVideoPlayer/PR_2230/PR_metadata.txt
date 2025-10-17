@@ -9,9 +9,3 @@ Closed at: 2018-12-07T11:32:23Z
 Merged at: 2018-12-07T11:32:23Z
 Merged by: None
 Time to merge: 2:44:39
-Commits: None
-Additions: None
-Deletions: None
-Changed files: None
-Comments: None
-Review comments: None
