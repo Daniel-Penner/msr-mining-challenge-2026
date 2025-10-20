@@ -1,0 +1,11 @@
+{
+  "java.autobuild.enabled": false,
+  "java.compile.nullAnalysis.mode": "disabled",
+  "files.exclude": {
+    "repos/**": true
+  },
+  "search.exclude": {
+    "repos/**": true,
+    "repos_forks/**": true
+  }
+}
