@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+
+# === Load the dataset ===
+df = pd.read_parquet("data/processed/refactoring_dataset_refactorings.parquet")
+
+print("=== Columns ===")
+print(df.columns.tolist())
+print("Total rows:", len(df))
+
+# === Create directory for plots ===
+os.makedirs("plots", exist_ok=True)
+
+# === Aggregate refactoring data per commit ===
+commit_stats = (
+    df.groupby(["sha", "agent"])
+    .size()
+    .reset_index(name="refactoring_count")
+)
+
+print("\n=== Aggregated commit-level dataset ===")
+print(commit_stats.head())
+
+# === Compute summary statistics per agent ===
+stats = (
+    commit_stats.groupby("agent")["refactoring_count"]
+    .agg(["count", "mean", "median", "std", "min", "max"])
+    .sort_values("mean", ascending=False)
+)
+print("\n=== Summary statistics per agent ===")
+print(stats)
+
+# === Boxplot ===
+plt.figure(figsize=(8, 5))
+commit_stats.boxplot(column="refactoring_count", by="agent", grid=False)
+plt.title("Refactoring Count per Commit by Agent")
+plt.suptitle("")
+plt.ylabel("Number of Refactorings")
+plt.xlabel("Agent")
+plt.tight_layout()
+plt.savefig("plots/boxplot_refactorings_per_agent.png")
+print("[SAVED] plots/boxplot_refactorings_per_agent.png")
+
+# === Cumulative distribution (CDF) ===
+plt.figure(figsize=(8, 5))
+for agent, group in commit_stats.groupby("agent"):
+    counts = group["refactoring_count"]
+    hist, bin_edges = np.histogram(counts, bins=20, density=True)
+    cdf = np.cumsum(hist) / np.sum(hist)
+    plt.plot(bin_edges[1:], cdf, label=f"{agent} (n={len(counts)})")
+
+plt.title("Cumulative Distribution of Refactorings per Commit")
+plt.xlabel("Refactorings per Commit")
+plt.ylabel("Cumulative Probability")
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.savefig("plots/cumulative_refactorings_per_agent.png")
+print("[SAVED] plots/cumulative_refactorings_per_agent.png")
+
+# === Normal line graph (sorted average) ===
+plt.figure(figsize=(8, 5))
+for agent, group in commit_stats.groupby("agent"):
+    sorted_counts = group["refactoring_count"].sort_values().reset_index(drop=True)
+    plt.plot(sorted_counts.index, sorted_counts.values, label=agent)
+
+plt.title("Sorted Refactoring Counts per Commit by Agent")
+plt.xlabel("Commit Rank (sorted)")
+plt.ylabel("Refactorings per Commit")
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.savefig("plots/sorted_refactorings_per_agent.png")
+print("[SAVED] plots/sorted_refactorings_per_agent.png")
+
+print("\nAll plots saved in ./plots/")
