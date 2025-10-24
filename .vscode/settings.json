@@ -7,5 +7,12 @@
   "search.exclude": {
     "repos/**": true,
     "repos_forks/**": true
-  }
+  },
+  "python-envs.pythonProjects": [
+    {
+      "path": "output",
+      "envManager": "ms-python.python:venv",
+      "packageManager": "ms-python.python:pip"
+    }
+  ]
 }

@@ -106,6 +106,39 @@ pivot = (
     .fillna(0)
 )
 
+# -------------------- Humans vs Agents summary --------------------
+print("🧮 Generating Humans vs Agents summary...")
+
+# Mark which commits are human vs agentic
+ref_events["group"] = ref_events["agent"].apply(lambda a: "Human" if a == "Human" else "Agentic")
+
+# Count refactoring types within each group
+ref_types_humans_vs_agents = (
+    ref_events.groupby(["group", "refactoring_type"])
+    .size()
+    .reset_index(name="count")
+)
+
+# Compute totals and shares within each group
+ref_types_humans_vs_agents["group_total"] = (
+    ref_types_humans_vs_agents.groupby("group")["count"].transform("sum")
+)
+ref_types_humans_vs_agents["share_pct"] = (
+    ref_types_humans_vs_agents["count"] / ref_types_humans_vs_agents["group_total"] * 100
+)
+
+# Sort for readability
+ref_types_humans_vs_agents = ref_types_humans_vs_agents.sort_values(
+    ["group", "share_pct"], ascending=[True, False]
+)
+
+# Save to CSV
+out_path = OUT_TABLES / "refactor_types_humans_vs_agents.csv"
+ref_types_humans_vs_agents.to_csv(out_path, index=False)
+
+print(f"💾 Saved Humans vs Agents summary → {out_path.name}")
+
+
 # -------------------- Stacked bar plot (all types, full legend shown) -----------------------
 import math
 
