@@ -66,6 +66,78 @@ print("\n📊 Per-Agent Refactoring Statistics:")
 print(stats.round(3).to_string())
 
 # ---------------------------------------------------------------
+# Per-agent aggregated tables for display (commit-level)
+# ---------------------------------------------------------------
+
+# Filter valid entries
+df_valid = df.copy()
+df_valid["refactoring_count"] = pd.to_numeric(df_valid["refactoring_count"], errors="coerce").fillna(0)
+df_valid["has_refactoring"] = df_valid["has_refactoring"].astype(bool)
+
+# 1️⃣ Table A — Commit counts and refactoring rates
+table_commits = (
+    df_valid.groupby("agent", dropna=False)
+    .agg(
+        total_commits=("sha", "nunique"),
+        refactoring_commits=("has_refactoring", "sum"),
+        total_refactorings=("refactoring_count", "sum"),
+    )
+    .reset_index()
+)
+
+# Compute rate (%)
+table_commits["refactoring_rate_%"] = (
+    table_commits["refactoring_commits"] / table_commits["total_commits"] * 100
+)
+
+# Compute refactors per refactoring commit
+table_commits["mean_refactors_per_ref_commit"] = table_commits.apply(
+    lambda r: r["total_refactorings"] / r["refactoring_commits"] if r["refactoring_commits"] > 0 else 0,
+    axis=1
+)
+
+table_commits = table_commits.round(3)
+
+print("\n📋 Table 1 — Commit and Refactoring Rates per Agent:")
+print(table_commits.to_string(index=False))
+
+# Save
+table_commits.to_csv(TABLES_DIR / "per_agent_commit_and_refactoring_rate.csv", index=False)
+
+# ---------------------------------------------------------------
+# 2️⃣ Table B — Refactors per Refactoring Commit stats (commit-level)
+# ---------------------------------------------------------------
+
+# Consider only commits that actually contain refactorings
+refactoring_commits = df_valid[df_valid["has_refactoring"]]
+
+# Compute per-agent stats
+table_refactors = (
+    refactoring_commits.groupby("agent", dropna=False)["refactoring_count"]
+    .agg(["mean", "median", "std", "min", "max", "count"])
+    .rename(columns={
+        "mean": "mean_refactors_per_ref_commit",
+        "median": "median_refactors_per_ref_commit",
+        "std": "std_refactors_per_ref_commit",
+        "min": "min_refactors_per_ref_commit",
+        "max": "max_refactors_per_ref_commit",
+        "count": "num_refactoring_commits"
+    })
+    .reset_index()
+)
+
+table_refactors = table_refactors.round(3)
+
+print("\n📊 Table 2 — Refactors per Refactoring Commit (Mean/Median/Std/Min/Max):")
+print(table_refactors.to_string(index=False))
+
+# Save
+table_refactors.to_csv(TABLES_DIR / "per_agent_refactors_per_ref_commit.csv", index=False)
+
+print("\n✅ Both tables generated and saved successfully (commit-level).")
+
+
+# ---------------------------------------------------------------
 # Create and save boxplots
 # ---------------------------------------------------------------
 agents = sorted(proj_summary["agent"].dropna().unique())

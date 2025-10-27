@@ -60,14 +60,13 @@ plt.close()
 # ---------------------------------------------------------------
 # 3. Stacked barplot: rate of less/same/more smells per agent
 # ---------------------------------------------------------------
-# Categorize each commit
 def categorize(delta):
     if delta < 0:
-        return "Less Smells"
+        return "Decreased Smells"
     elif delta == 0:
-        return "Same Smells"
+        return "No Change"
     else:
-        return "More Smells"
+        return "Increased Smells"
 
 df["category"] = df["delta"].apply(categorize)
 
@@ -77,15 +76,20 @@ counts = (
     .size()
     .unstack(fill_value=0)
 )
-
 proportions = counts.div(counts.sum(axis=1), axis=0)
+
+# 🟢 Reorder agents so 'human' is last
+agents_order = [a for a in proportions.index if a.lower() != "human"] + [
+    a for a in proportions.index if a.lower() == "human"
+]
+proportions = proportions.loc[agents_order]
 
 # Plot stacked bar
 plt.figure(figsize=(8, 6))
 bottom = None
-colors = {"Less Smells": "#10B981", "Same Smells": "#A3A3A3", "More Smells": "#EF4444"}
+colors = {"Decreased Smells": "#10B981", "No Change": "#A3A3A3", "Increased Smells": "#EF4444"}
 
-for cat in ["Less Smells", "Same Smells", "More Smells"]:
+for cat in ["Decreased Smells", "No Change", "Increased Smells"]:
     plt.bar(
         proportions.index,
         proportions[cat],
@@ -95,12 +99,13 @@ for cat in ["Less Smells", "Same Smells", "More Smells"]:
     )
     bottom = proportions[cat] if bottom is None else bottom + proportions[cat]
 
-plt.title("Proportion of Commits by Smell Change Category per Agent")
+plt.title("Increase or Decrease in Smells per Commit by Agent")
 plt.ylabel("Proportion of Commits")
 plt.xlabel("Agent")
 plt.legend(title="Change Type")
 plt.tight_layout()
 plt.savefig(OUT_DIR / "smell_change_stacked_barplot.png", dpi=300)
 plt.close()
+
 
 print("✅ Saved plots to:", OUT_DIR)
