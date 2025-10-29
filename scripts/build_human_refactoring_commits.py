@@ -5,7 +5,7 @@ Build a commit-level HUMAN dataset limited to PR commits that were actually
 analyzed by RefactoringMiner (including those with zero refactorings).
 
 Inputs:
-  - data/processed/java_baseline_pr_commits.parquet
+  - data/processed/baseline_pr_commits.parquet
       (the PR commit list used as input to run_refactoringminer_baseline.py)
   - data/processed/refminer_baseline_results/refminer_all_baseline.json
       (RefactoringMiner combined JSON output; includes commits with 0 refactorings)
@@ -26,7 +26,7 @@ import json
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-PR_COMMITS = PROJECT_ROOT / "data" / "processed" / "java_baseline_pr_commits.parquet"
+PR_COMMITS = PROJECT_ROOT / "data" / "processed" / "baseline_pr_commits.parquet"
 RM_JSON    = PROJECT_ROOT / "data" / "processed" / "refminer_baseline_results" / "refminer_all_baseline.json"
 OUT_PATH   = PROJECT_ROOT / "data" / "processed" / "human_refactoring_commits.parquet"
 

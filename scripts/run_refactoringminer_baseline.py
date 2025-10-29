@@ -2,7 +2,7 @@
 run_refactoringminer_baseline.py
 --------------------------------
 Runs RefactoringMiner 3.0.11 on every commit in each PR
-listed in data/processed/java_baseline_pr_commits.parquet.
+listed in data/processed/baseline_pr_commits.parquet.
 
 Uses cloned repositories from repos_baseline/.
 Combines all results into a single JSON file (refminer_all_baseline.json).
@@ -21,7 +21,7 @@ from tqdm import tqdm
 # PATH CONFIGURATION
 # --------------------------------------------------------------------
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DATA_PATH = PROJECT_ROOT / "data" / "processed" / "java_baseline_pr_commits.parquet"
+DATA_PATH = PROJECT_ROOT / "data" / "processed" / "baseline_pr_commits.parquet"
 REFMINER_BIN = PROJECT_ROOT / "tools" / "RefactoringMiner-3.0.11"
 REPOS_DIR = PROJECT_ROOT / "repos_baseline"
 RESULTS_DIR = PROJECT_ROOT / "data" / "processed" / "refminer_baseline_results"

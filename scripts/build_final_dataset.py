@@ -8,7 +8,7 @@ the AIDev Java PR commit metadata.
 
 Inputs:
   - data/processed/refminer_results/refminer_all.json         (RefactoringMiner merged output)
-  - data/processed/java_agentic_pr_commits_final.parquet      (commit + PR + repo + agent)
+  - data/processed/agentic_pr_commits.parquet      (commit + PR + repo + agent)
 
 Outputs:
   - data/processed/refactoring_dataset_commits.parquet        (one row per commit; flags & counts)
@@ -28,7 +28,7 @@ import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 RM_JSON = PROJECT_ROOT / "data" / "processed" / "refminer_results" / "refminer_all.json"
-META_PARQUET = PROJECT_ROOT / "data" / "processed" / "java_agentic_pr_commits_final.parquet"
+META_PARQUET = PROJECT_ROOT / "data" / "processed" / "agentic_pr_commits.parquet"
 
 OUT_DIR = PROJECT_ROOT / "data" / "processed"
 COMMITS_OUT = OUT_DIR / "refactoring_dataset_commits.parquet"

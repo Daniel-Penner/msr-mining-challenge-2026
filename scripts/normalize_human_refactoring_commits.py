@@ -8,7 +8,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data" / "processed"
 
 # Use the PR commit dataset (commits analyzed by RefMiner)
-BASELINE_COMMITS = DATA_DIR / "java_baseline_pr_commits.parquet"
+BASELINE_COMMITS = DATA_DIR / "baseline_pr_commits.parquet"
 HUMAN_REFACTORING_COMMITS = DATA_DIR / "human_refactoring_commits.parquet"
 UPDATED_HUMAN = DATA_DIR / "human_refactoring_commits_normalized.parquet"
 

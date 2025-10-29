@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 
 RAW = Path("data/raw")
-OUT = Path("data/processed/java_agentic_pr_commits_final.parquet")
+OUT = Path("data/processed/agentic_pr_commits.parquet")
 
 print("Loading base datasets...")
 repos = pd.read_parquet(RAW / "all_repository.parquet")
@@ -33,5 +33,4 @@ final = merged[[
 
 OUT.parent.mkdir(parents=True, exist_ok=True)
 final.to_parquet(OUT)
-print(f"✅ Final dataset saved to {OUT}")
 print(final.sample(5))

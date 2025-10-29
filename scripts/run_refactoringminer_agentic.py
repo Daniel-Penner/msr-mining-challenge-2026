@@ -2,7 +2,7 @@
 run_refactoringminer_agentic.py
 -------------------------------
 Runs RefactoringMiner 3.0.11 on every commit in each PR
-listed in data/processed/java_agentic_pr_commits_final.parquet.
+listed in data/processed/agentic_pr_commits.parquet.
 
 Uses forked repositories from repos_forks/.
 Combines all results into a single JSON file (refminer_all.json).
@@ -18,7 +18,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DATA_PATH = PROJECT_ROOT / "data" / "processed" / "java_agentic_pr_commits_final.parquet"
+DATA_PATH = PROJECT_ROOT / "data" / "processed" / "agentic_pr_commits.parquet"
 REFMINER_BIN = PROJECT_ROOT / "tools" / "RefactoringMiner-3.0.11"
 REPOS_DIR = PROJECT_ROOT / "repos_forks"
 RESULTS_DIR = PROJECT_ROOT / "data" / "processed" / "refminer_results"

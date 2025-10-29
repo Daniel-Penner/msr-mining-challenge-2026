@@ -1,9 +1,0 @@
-@@ -51,4 +51,8 @@ public void clickMultiHolder(View view) {
-     public void clickRecyclerView(View view) {
-         startActivity(new Intent(ActivityListView.this, ActivityListViewRecyclerView.class));
-     }
-+
-+    public void clickRecyclerViewSeamlessPlay(View view) {
-+        startActivity(new Intent(ActivityListView.this, ActivityRecyclerViewSeamlessPlay.class));
-+    }
- }

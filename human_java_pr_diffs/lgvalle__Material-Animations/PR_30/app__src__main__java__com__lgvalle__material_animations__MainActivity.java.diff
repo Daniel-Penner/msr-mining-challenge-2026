@@ -1,9 +1,0 @@
-@@ -43,7 +43,7 @@ private void setupSamples() {
-         );
-     }
- 
--    protected void setupToolbar() {
-+    private void setupToolbar() {
-         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-         setSupportActionBar(toolbar);
-         getSupportActionBar().setDisplayShowTitleEnabled(false);

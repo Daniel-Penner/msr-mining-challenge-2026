@@ -1,9 +1,0 @@
-@@ -87,7 +87,7 @@ private void changePosition() {
-         if (positionChanged) {
-             lp.gravity = Gravity.CENTER;
-         } else {
--            lp.gravity = Gravity.START;
-+            lp.gravity = Gravity.LEFT;
-         }
-         positionChanged = !positionChanged;
-         square.setLayoutParams(lp);
