@@ -2,16 +2,16 @@ import pandas as pd
 from scipy.stats import mannwhitneyu
 import numpy as np
 
-Load your data
+#Load data
 df = pd.read_csv("G:\msr-mining-challenge-2026\data\processed\smell_deltas_per_commit.csv")
 
-Separate human and agentic data
+#Separate human and agentic data
 human = df[df["agent"] == "Human"]["delta"].dropna()
 
-Get unique agent names (excluding Human)
+#Get unique agent names (excluding Human)
 agents = df[df["agent"] != "Human"]["agent"].unique()
 
-Function to compute Cliff's delta
+#Function to compute Cliff's delta
 def cliffs_delta(x, y):
     """Compute Cliff's delta for two independent samples."""
     n1, n2 = len(x), len(y)
@@ -21,7 +21,7 @@ def cliffs_delta(x, y):
     delta = (greater - less) / (n1 * n2)
     return delta
 
-Function to interpret Cliff's delta
+#Function to interpret Cliff's delta
 def interpret_delta(delta):
     abs_d = abs(delta)
     if abs_d < 0.147:
@@ -33,15 +33,15 @@ def interpret_delta(delta):
     else:
         return "large"
 
-Run tests for each agent vs human
+#Run tests for each agent vs human
 results = []
 for agent in agents:
     agent_data = df[df["agent"] == agent]["delta"].dropna()
 
-Mann–Whitney U test
+#Mann–Whitney U test
     stat, p_value = mannwhitneyu(human, agent_data, alternative='two-sided')
 
-Cliff's delta
+#Cliff's delta
     delta = cliffs_delta(agent_data.values, human.values)
     interpretation = interpret_delta(delta)
 
@@ -59,6 +59,6 @@ Cliff's delta
         f"n{agent}": len(agent_data)
     })
 
-Convert to DataFrame
+#Convert to DataFrame
 results_df = pd.DataFrame(results)
 print(results_df)

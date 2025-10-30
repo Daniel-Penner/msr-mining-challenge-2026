@@ -24,8 +24,8 @@ LOGS_DIR = PROJECT_ROOT / "outputs" / "logs"
 TEMP_DIR = DATA_DIR / "designite_temp"
 DESIGNITE_JAR = PROJECT_ROOT / "tools" / "DesigniteJava.jar"
 
-AGENTIC_COMMITS = DATA_DIR / "refactoring_dataset_commits_deduped.parquet"
-HUMAN_COMMITS = DATA_DIR / "human_refactoring_commits.parquet"
+AGENTIC_COMMITS = DATA_DIR / "agentic_refactoring_commits.parquet"
+HUMAN_COMMITS = DATA_DIR / "baseline_refactoring_commits.parquet"
 REPOS_AGENTIC = PROJECT_ROOT / "repos_forks"
 REPOS_HUMAN = PROJECT_ROOT / "repos_baseline"
 

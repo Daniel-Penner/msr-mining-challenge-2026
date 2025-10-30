@@ -10,8 +10,8 @@ for d in (OUT_DIR, PLOTS_DIR, TABLES_DIR):
     d.mkdir(parents=True, exist_ok=True)
 
 def load_datasets():
-    agentic = pd.read_parquet(DATA_DIR / "refactoring_dataset_commits_deduped.parquet")
-    human = pd.read_parquet(DATA_DIR / "human_refactoring_commits_normalized.parquet")
+    agentic = pd.read_parquet(DATA_DIR / "agentic_refactoring_commits.parquet")
+    human = pd.read_parquet(DATA_DIR / "baseline_refactoring_commits_normalized.parquet")
     human_pr = pd.read_parquet(DATA_DIR / "baseline_pr_commits.parquet")
     human["dataset"] = "Human"
     agentic["dataset"] = "Agentic"

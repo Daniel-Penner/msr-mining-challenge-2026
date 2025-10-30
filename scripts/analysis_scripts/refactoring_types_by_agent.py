@@ -11,10 +11,10 @@ Outputs:
  - A per-agent bar chart of top refactoring types.
 
 Inputs (expected in data/processed/):
-  - refactoring_dataset_refactorings.parquet
+  - agentic_refactorings.parquet
   - baseline_refactorings.parquet
-  - refactoring_dataset_commits.parquet
-  - human_refactoring_commits.parquet
+  - agentic_refactoring_commits.parquet
+  - baseline_refactoring_commits.parquet
 
 Outputs:
   outputs/tables/refactor_types_by_agent_*.csv
@@ -34,9 +34,9 @@ OUT_PLOTS = PROJECT_ROOT / "outputs" / "plots"
 OUT_TABLES.mkdir(parents=True, exist_ok=True)
 OUT_PLOTS.mkdir(parents=True, exist_ok=True)
 
-AGENTIC_COMMITS = DATA / "refactoring_dataset_commits.parquet"
-AGENTIC_REFACTS = DATA / "refactoring_dataset_refactorings.parquet"
-HUMAN_COMMITS   = DATA / "human_refactoring_commits.parquet"
+AGENTIC_COMMITS = DATA / "agentic_refactoring_commits.parquet"
+AGENTIC_REFACTS = DATA / "agentic_refactorings.parquet"
+HUMAN_COMMITS   = DATA / "baseline_refactoring_commits.parquet"
 HUMAN_REFACTS   = DATA / "baseline_refactorings.parquet"
 
 plt.rcParams.update({"figure.dpi": 140})
