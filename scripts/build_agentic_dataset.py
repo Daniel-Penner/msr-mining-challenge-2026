@@ -1,23 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-build_refactoring_dataset.py
-----------------------------
-Create a research-grade dataset combining RefactoringMiner results with
-the AIDev Java PR commit metadata.
-
-Inputs:
-  - data/processed/refminer_results/refminer_all.json         (RefactoringMiner merged output)
-  - data/processed/agentic_pr_commits.parquet                 (commit + PR + repo + agent)
-
-Outputs:
-  - data/processed/agentic_refactoring_commits.parquet (one row per commit; deduplicated on sha+agent)
-  - data/processed/agentic_refactorings.parquet   (one row per refactoring event)
-
-Run:
-  python scripts/build_refactoring_dataset.py
-"""
-
 import json
 import sys
 from pathlib import Path
@@ -25,9 +5,6 @@ from typing import Any, Dict, Iterable, List, Optional
 
 import pandas as pd
 
-# --------------------------------------------------------------------
-# PATH CONFIGURATION
-# --------------------------------------------------------------------
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 RM_JSON = PROJECT_ROOT / "data" / "processed" / "refminer_results" / "refminer_all.json"
 META_PARQUET = PROJECT_ROOT / "data" / "processed" / "agentic_pr_commits.parquet"
@@ -36,9 +13,6 @@ OUT_DIR = PROJECT_ROOT / "data" / "processed"
 COMMITS_OUT_DEDUPED = OUT_DIR / "agentic_refactoring_commits.parquet"
 REFACT_OUT = OUT_DIR / "agentic_refactorings.parquet"
 
-# --------------------------------------------------------------------
-# HELPER FUNCTIONS
-# --------------------------------------------------------------------
 def _safe_list(x: Optional[Iterable]) -> List:
     if x is None:
         return []
@@ -70,9 +44,6 @@ def _flatten_locations(loc_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         })
     return out
 
-# --------------------------------------------------------------------
-# LOAD INPUTS
-# --------------------------------------------------------------------
 print("Loading inputs...")
 if not RM_JSON.exists():
     sys.exit(f"Missing RefactoringMiner JSON: {RM_JSON}")
@@ -85,12 +56,9 @@ with RM_JSON.open("r", encoding="utf-8") as f:
 meta = pd.read_parquet(META_PARQUET)
 meta = meta[[ "sha", "pr_id", "number", "repo_url", "full_name", "language", "agent" ]].drop_duplicates()
 
-print(f"  • Meta rows: {len(meta)} | commits: {meta['sha'].nunique()} | PRs: {meta['pr_id'].nunique()} | repos: {meta['full_name'].nunique()}")
+print(f"Meta rows: {len(meta)} | commits: {meta['sha'].nunique()} | PRs: {meta['pr_id'].nunique()} | repos: {meta['full_name'].nunique()}")
 
-# --------------------------------------------------------------------
-# FLATTEN REFACTORINGS
-# --------------------------------------------------------------------
-print("Flattening RefactoringMiner refactorings...")
+print("Flattening RefactoringMiner refactorings")
 ref_rows: List[Dict[str, Any]] = []
 commits_json: List[Dict[str, Any]] = rm.get("commits", [])
 
@@ -128,13 +96,10 @@ for c in commits_json:
 ref_df = pd.DataFrame(ref_rows)
 
 if len(ref_df) == 0:
-    print("⚠️ No refactorings found in refminer JSON.")
+    print("No refactorings found in refminer JSON.")
 else:
-    print(f"  • Refactorings: {len(ref_df)} across {ref_df['sha'].nunique()} commits and {ref_df['refactoring_type'].nunique()} types.")
+    print(f"Refactorings: {len(ref_df)} across {ref_df['sha'].nunique()} commits and {ref_df['refactoring_type'].nunique()} types.")
 
-# --------------------------------------------------------------------
-# AGGREGATE PER-COMMIT
-# --------------------------------------------------------------------
 print("Aggregating per-commit metrics...")
 if len(ref_df) > 0:
     agg = (
@@ -159,32 +124,26 @@ commits["repo"] = commits["full_name"].apply(lambda s: s.split("/")[1] if isinst
 
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# --------------------------------------------------------------------
-# WRITE OUTPUTS
-# --------------------------------------------------------------------
+#Outputs
 if len(ref_df) > 0:
     ref_enriched = ref_df.merge(
         commits[["sha", "pr_id", "number", "full_name", "owner", "repo", "agent"]],
         on="sha", how="left"
     )
     ref_enriched.to_parquet(REFACT_OUT, index=False)
-    print(f"💾 Saved: {REFACT_OUT}")
+    print(f"Saved: {REFACT_OUT}")
 
-# --------------------------------------------------------------------
-# DEDUPLICATION STEP (ONLY SAVED OUTPUT)
-# --------------------------------------------------------------------
-print("\n🔍 Deduplicating on commit–agent pairs...")
+#Deduplicate
+print("\nDeduplicating on commit–agent pairs...")
 before = len(commits)
 deduped = commits.drop_duplicates(subset=["sha", "agent"])
 after = len(deduped)
 print(f"  Before: {before} rows  →  After: {after} rows")
 
 deduped.to_parquet(COMMITS_OUT_DEDUPED, index=False)
-print(f"✅ Saved deduplicated dataset → {COMMITS_OUT_DEDUPED}")
+print(f"Saved deduplicated dataset → {COMMITS_OUT_DEDUPED}")
 
-# --------------------------------------------------------------------
-# SUMMARY STATS
-# --------------------------------------------------------------------
+#Summary stats
 print("\nSummary Stats")
 total_commits = len(deduped)
 ref_commits = int(deduped["has_refactoring"].sum())
@@ -194,9 +153,9 @@ mean_per_ref_commit = (
     if ref_commits else 0.0
 )
 
-print(f"  • Commits total: {total_commits}")
-print(f"  • Commits with refactoring: {ref_commits} ({pct:.2f}%)")
-print(f"  • Avg # refactorings per refactoring-commit: {mean_per_ref_commit:.2f}")
+print(f"Commits total: {total_commits}")
+print(f"Commits with refactoring: {ref_commits} ({pct:.2f}%)")
+print(f"Avg # refactorings per refactoring-commit: {mean_per_ref_commit:.2f}")
 
 if len(ref_df) > 0:
     top_types = (
@@ -206,10 +165,8 @@ if len(ref_df) > 0:
         .rename_axis("refactoring_type")
         .reset_index(name="count")
     )
-    print("\n  • Top 10 refactoring types:")
+    print("\nTop 10 refactoring types:")
     for _, row in top_types.iterrows():
         print(f"     - {row['refactoring_type']}: {row['count']}")
 else:
-    print("  • No refactoring types present (empty ref_df).")
-
-print("\n✅ Done.")
+    print("No refactoring types present (empty ref_df).")

@@ -1,4 +1,3 @@
-# scripts/clone_baseline_repos.py
 import subprocess
 import pandas as pd
 from pathlib import Path

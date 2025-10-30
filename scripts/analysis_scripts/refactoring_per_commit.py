@@ -1,20 +1,34 @@
-# scripts/analysis_scripts/refactoring_rate_per_project.py
-
+from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
-from dataloader import load_datasets, PLOTS_DIR, TABLES_DIR
 
-# ---------------------------------------------------------------
-# Load datasets
-# ---------------------------------------------------------------
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DATA_DIR = PROJECT_ROOT / "data" / "processed"
+OUT_DIR = PROJECT_ROOT / "outputs"
+PLOTS_DIR = OUT_DIR / "plots"
+TABLES_DIR = OUT_DIR / "tables"
+
+for d in (OUT_DIR, PLOTS_DIR, TABLES_DIR):
+    d.mkdir(parents=True, exist_ok=True)
+
+def load_datasets():
+    """Load and merge agentic and human datasets locally."""
+    agentic = pd.read_parquet(DATA_DIR / "agentic_refactoring_commits.parquet")
+    human = pd.read_parquet(DATA_DIR / "baseline_refactoring_commits_normalized.parquet")
+    human_pr = pd.read_parquet(DATA_DIR / "baseline_pr_commits.parquet")
+
+    agentic["dataset"] = "Agentic"
+    human["dataset"] = "Human"
+
+    df = pd.concat([agentic, human], ignore_index=True)
+    df["refactoring_count"] = df["refactoring_count"].fillna(0).astype(int)
+    return df
+
 df = load_datasets()
-
 agentic = df[df["dataset"] == "Agentic"]
 human = df[df["dataset"] == "Human"]
 
-# ---------------------------------------------------------------
-# Per-project (agent × repo) summary
-# ---------------------------------------------------------------
+#Summary per Project
 def summarize_per_project(sub_df, label):
     proj = (
         sub_df.groupby(["agent", "full_name"], dropna=False)
@@ -48,9 +62,6 @@ human_proj = summarize_per_project(human, "Observed human commits")
 proj_summary = pd.concat([agentic_proj, human_proj], ignore_index=True)
 proj_summary.to_csv(TABLES_DIR / "per_project_refactoring_rate.csv", index=False)
 
-# ---------------------------------------------------------------
-# Compute descriptive statistics
-# ---------------------------------------------------------------
 stats = (
     proj_summary.groupby("agent")[[
         "refactoring_rate_%",
@@ -62,19 +73,15 @@ stats = (
 
 stats.to_csv(TABLES_DIR / "per_agent_refactoring_stats.csv")
 
-print("\n📊 Per-Agent Refactoring Statistics:")
+print("\nPer-Agent Refactoring Statistics per Project:")
 print(stats.round(3).to_string())
 
-# ---------------------------------------------------------------
-# Per-agent aggregated tables for display (commit-level)
-# ---------------------------------------------------------------
 
-# Filter valid entries
+#Refactoring commits/total commits
 df_valid = df.copy()
 df_valid["refactoring_count"] = pd.to_numeric(df_valid["refactoring_count"], errors="coerce").fillna(0)
 df_valid["has_refactoring"] = df_valid["has_refactoring"].astype(bool)
 
-# 1️⃣ Table A — Commit counts and refactoring rates
 table_commits = (
     df_valid.groupby("agent", dropna=False)
     .agg(
@@ -85,12 +92,11 @@ table_commits = (
     .reset_index()
 )
 
-# Compute rate (%)
 table_commits["refactoring_rate_%"] = (
     table_commits["refactoring_commits"] / table_commits["total_commits"] * 100
 )
 
-# Compute refactors per refactoring commit
+#Refactors/refactoring commit
 table_commits["mean_refactors_per_ref_commit"] = table_commits.apply(
     lambda r: r["total_refactorings"] / r["refactoring_commits"] if r["refactoring_commits"] > 0 else 0,
     axis=1
@@ -98,20 +104,12 @@ table_commits["mean_refactors_per_ref_commit"] = table_commits.apply(
 
 table_commits = table_commits.round(3)
 
-print("\n📋 Table 1 — Commit and Refactoring Rates per Agent:")
+print("\nTable 1 — Commit and Refactoring Rates per Agent:")
 print(table_commits.to_string(index=False))
 
-# Save
 table_commits.to_csv(TABLES_DIR / "per_agent_commit_and_refactoring_rate.csv", index=False)
-
-# ---------------------------------------------------------------
-# 2️⃣ Table B — Refactors per Refactoring Commit stats (commit-level)
-# ---------------------------------------------------------------
-
-# Consider only commits that actually contain refactorings
 refactoring_commits = df_valid[df_valid["has_refactoring"]]
 
-# Compute per-agent stats
 table_refactors = (
     refactoring_commits.groupby("agent", dropna=False)["refactoring_count"]
     .agg(["mean", "median", "std", "min", "max", "count"])
@@ -128,18 +126,15 @@ table_refactors = (
 
 table_refactors = table_refactors.round(3)
 
-print("\n📊 Table 2 — Refactors per Refactoring Commit (Mean/Median/Std/Min/Max):")
+print("\nTable 2 — Refactors per Refactoring Commit (Mean/Median/Std/Min/Max):")
 print(table_refactors.to_string(index=False))
 
-# Save
 table_refactors.to_csv(TABLES_DIR / "per_agent_refactors_per_ref_commit.csv", index=False)
 
-print("\n✅ Both tables generated and saved successfully (commit-level).")
+print("\nBoth tables generated and saved successfully.")
 
 
-# ---------------------------------------------------------------
-# Create and save boxplots
-# ---------------------------------------------------------------
+#Boxplots
 agents = sorted(proj_summary["agent"].dropna().unique())
 
 def make_boxplot(metric_col, title, ylabel, filename, log_scale=False):
@@ -158,10 +153,10 @@ def make_boxplot(metric_col, title, ylabel, filename, log_scale=False):
     plt.tight_layout()
     plt.savefig(PLOTS_DIR / filename, dpi=300)
     plt.close()
-    print(f"✅ Saved plot: {filename}")
+    print(f"\nSaved plot: {filename}")
 
 
-# 1️⃣ Refactoring rate (%)
+#Refactoring rate
 make_boxplot(
     "refactoring_rate_%",
     "Per-Project Refactoring Commit Rate by Agent",
@@ -169,7 +164,7 @@ make_boxplot(
     "box_refactoring_rate_per_project.png",
 )
 
-# 2️⃣ Refactors per all commits
+#Refactors per all commits
 make_boxplot(
     "refactors_per_all_commits",
     "Per-Project Refactors per All Commits by Agent (log scale)",
@@ -178,7 +173,7 @@ make_boxplot(
     log_scale=True,
 )
 
-# 3️⃣ Refactors per refactoring commit
+#Refactors per refactoring commit
 make_boxplot(
     "refactors_per_refactoring_commit",
     "Per-Project Refactors per Refactoring Commit by Agent (log scale)",
@@ -186,6 +181,3 @@ make_boxplot(
     "box_refactors_per_refactoring_commit_per_project.png",
     log_scale=True,
 )
-
-
-print("\n✅ All plots and statistical summaries saved successfully.")

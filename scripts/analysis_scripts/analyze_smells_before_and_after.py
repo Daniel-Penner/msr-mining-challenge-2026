@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Designite smell analysis — analyzes only changed files per commit,
-runs before and after commit with proper git checkouts.
-Author: Daniel Penner (2025)
-"""
-
 import subprocess
 import pandas as pd
 import time
@@ -16,7 +8,6 @@ import sys
 import shutil
 import tempfile
 
-# ---------------- CONFIG ----------------
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = PROJECT_ROOT / "data" / "processed"
 TABLES_DIR = PROJECT_ROOT / "outputs" / "tables"
@@ -39,9 +30,9 @@ logging.basicConfig(
     handlers=[logging.FileHandler(LOG_FILE, mode="a", encoding="utf-8"),
               logging.StreamHandler(sys.stdout)]
 )
-print(f"🧩 Logging to {LOG_FILE}")
+print(f"Logging to {LOG_FILE}")
 
-# ---------------- HELPERS ----------------
+
 def run_subprocess(cmd, timeout=300):
     try:
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
@@ -105,7 +96,7 @@ def run_designite(input_dir: Path, output_dir: Path, label: str) -> int:
         "-o", str(output_dir),
         "-d", "-f", "csv"
     ]
-    logging.info(f"🚀 Running Designite on {label}")
+    logging.info(f"Running Designite on {label}")
     ok, out, err = run_subprocess(cmd, timeout=900)
     if not ok:
         logging.error(f"❌ Designite failed for {label}")
@@ -125,8 +116,8 @@ def count_smells(output_dir: Path) -> int:
             logging.warning(f"Could not read {csv.name}: {e}")
     return total
 
-# ---------------- MAIN ----------------
-print("📦 Loading commit datasets...")
+
+print("Loading commit datasets...")
 agentic = pd.read_parquet(AGENTIC_COMMITS)
 human = pd.read_parquet(HUMAN_COMMITS)
 agentic["dataset"], human["dataset"] = "Agentic", "Human"
@@ -148,16 +139,16 @@ for i, row in tqdm(combined.iterrows(), total=len(combined), desc="Analyzing com
 
     changed = get_changed_files(repo, sha)
     num_changed = len(changed)
-    logging.info(f"🔍 {dataset}/{agent}/{repo_name}@{sha[:8]}: {num_changed} files changed")
+    logging.info(f"{dataset}/{agent}/{repo_name}@{sha[:8]}: {num_changed} files changed")
 
     if num_changed == 0:
-        logging.info(f"⏩ Skipping {repo_name}@{sha[:8]} — 0 files changed")
+        logging.info(f"Skipping {repo_name}@{sha[:8]} — 0 files changed")
         continue
 
     label = f"{dataset}/{agent}/{repo_name}@{sha[:8]}"
     t0 = time.time()
 
-    # --- Run BEFORE version ---
+    #Before refactor files
     if checkout_commit(repo, f"{sha}^"):
         subset_before = copy_subset(repo, changed)
         smells_before = run_designite(subset_before, TEMP_DIR / f"{repo_name}_{sha[:8]}_before", f"{label}_before")
@@ -165,7 +156,7 @@ for i, row in tqdm(combined.iterrows(), total=len(combined), desc="Analyzing com
     else:
         smells_before = 0
 
-    # --- Run AFTER version ---
+    #After refactor files
     if checkout_commit(repo, sha):
         subset_after = copy_subset(repo, changed)
         smells_after = run_designite(subset_after, TEMP_DIR / f"{repo_name}_{sha[:8]}_after", f"{label}_after")
@@ -185,7 +176,7 @@ for i, row in tqdm(combined.iterrows(), total=len(combined), desc="Analyzing com
 
     print(f"{label}: Δ={delta}, before={smells_before}, after={smells_after}, {elapsed:.1f}s")
 
-# ---------------- OUTPUT ----------------
+#Output
 df = pd.DataFrame(results)
 out_csv = DATA_DIR / "smell_deltas_per_commit.csv"
 df.to_csv(out_csv, index=False)
@@ -197,8 +188,8 @@ if not df.empty:
         .agg(["mean", "median", "std", "min", "max"]).round(2)
     )
     summary.to_csv(TABLES_DIR / "smell_summary_stats_by_agent.csv")
-    print("📊 Summary saved.")
+    print("Summary saved.")
 else:
-    print("⚠️ No valid results.")
+    print("No valid results.")
 
 print(f"✅ Done in {(time.time()-start_time)/60:.2f} min total.")

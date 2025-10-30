@@ -1,19 +1,12 @@
-#!/usr/bin/env python3
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# ---------------------------------------------------------------
-# PATHS
-# ---------------------------------------------------------------
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_PATH = PROJECT_ROOT / "data" / "processed" / "smell_deltas_per_commit.csv"
 OUT_DIR = PROJECT_ROOT / "outputs" / "plots"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# ---------------------------------------------------------------
-# LOAD DATA
-# ---------------------------------------------------------------
 df = pd.read_csv(DATA_PATH)
 print(f"Loaded {len(df)} rows")
 
@@ -22,13 +15,11 @@ df["delta"] = pd.to_numeric(df["delta"], errors="coerce")
 df["smells_before"] = pd.to_numeric(df["smells_before"], errors="coerce")
 df["smells_after"] = pd.to_numeric(df["smells_after"], errors="coerce")
 
-# ---------------------------------------------------------------
-# 1. Boxplot of smell deltas per agent
-# ---------------------------------------------------------------
+#Boxplot of smell deltas
 plt.figure(figsize=(8, 6))
 df.boxplot(column="delta", by="agent", grid=False)
 plt.title("Distribution of Smell Deltas per Agent")
-plt.suptitle("")  # remove default subtitle
+plt.suptitle("")
 plt.xlabel("Agent")
 plt.ylabel("Smell Delta (after - before)")
 plt.yscale("symlog", linthresh=1)
@@ -36,9 +27,7 @@ plt.tight_layout()
 plt.savefig(OUT_DIR / "smell_deltas_boxplot.png", dpi=300)
 plt.close()
 
-# ---------------------------------------------------------------
-# 2. Bar graph: smells before vs after per agent
-# ---------------------------------------------------------------
+#Bar graph of a vs b per agent
 grouped = df.groupby("agent")[["smells_before", "smells_after"]].mean().reset_index()
 
 x = range(len(grouped))
@@ -57,9 +46,7 @@ plt.tight_layout()
 plt.savefig(OUT_DIR / "smells_before_after_bargraph.png", dpi=300)
 plt.close()
 
-# ---------------------------------------------------------------
-# 3. Stacked barplot: rate of less/same/more smells per agent
-# ---------------------------------------------------------------
+#Stacked barplot of rates of smell change types by agent
 def categorize(delta):
     if delta < 0:
         return "Decreased Smells"
@@ -70,7 +57,6 @@ def categorize(delta):
 
 df["category"] = df["delta"].apply(categorize)
 
-# Compute proportions per agent
 counts = (
     df.groupby(["agent", "category"])
     .size()
@@ -78,13 +64,11 @@ counts = (
 )
 proportions = counts.div(counts.sum(axis=1), axis=0)
 
-# 🟢 Reorder agents so 'human' is last
 agents_order = [a for a in proportions.index if a.lower() != "human"] + [
     a for a in proportions.index if a.lower() == "human"
 ]
 proportions = proportions.loc[agents_order]
 
-# Plot stacked bar
 plt.figure(figsize=(8, 6))
 bottom = None
 colors = {"Decreased Smells": "#10B981", "No Change": "#A3A3A3", "Increased Smells": "#EF4444"}

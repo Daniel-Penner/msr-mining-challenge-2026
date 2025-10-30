@@ -1,16 +1,3 @@
-"""
-run_refactoringminer_agentic.py
--------------------------------
-Runs RefactoringMiner 3.0.11 on every commit in each PR
-listed in data/processed/agentic_pr_commits.parquet.
-
-Uses forked repositories from repos_forks/.
-Combines all results into a single JSON file (refminer_all.json).
-
-Skips missing commits, logs all successful analyses,
-and summarizes results at the end.
-"""
-
 import subprocess
 import json
 import pandas as pd
@@ -26,7 +13,6 @@ RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 FINAL_OUTPUT = RESULTS_DIR / "refminer_all.json"
 
-# REFACTORINGMINER COMMAND TEMPLATE
 REFMINER_CMD_BASE = [
     "java", "-cp",
     f"{REFMINER_BIN}/bin;{REFMINER_BIN}/lib/*",
@@ -34,13 +20,13 @@ REFMINER_CMD_BASE = [
     "-c"
 ]
 
-print(f"📦 Loading commits from {DATA_PATH}")
+print(f"Loading commits from {DATA_PATH}")
 df = pd.read_parquet(DATA_PATH)
 num_prs = df["pr_id"].nunique()
 num_repos = df["full_name"].nunique()
 print(f"Loaded {len(df)} commits from {num_prs} PRs across {num_repos} repos.")
 
-# COUNTERS
+#Counters
 successful_commits = 0
 failed_commits = []
 successful_repos = set()

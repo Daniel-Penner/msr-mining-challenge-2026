@@ -1,25 +1,9 @@
-"""
-run_refactoringminer_baseline.py
---------------------------------
-Runs RefactoringMiner 3.0.11 on every commit in each PR
-listed in data/processed/baseline_pr_commits.parquet.
-
-Uses cloned repositories from repos_baseline/.
-Combines all results into a single JSON file (refminer_all_baseline.json).
-
-Skips missing commits, logs all successful analyses,
-and summarizes results at the end.
-"""
-
 import subprocess
 import json
 import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
 
-# --------------------------------------------------------------------
-# PATH CONFIGURATION
-# --------------------------------------------------------------------
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = PROJECT_ROOT / "data" / "processed" / "baseline_pr_commits.parquet"
 REFMINER_BIN = PROJECT_ROOT / "tools" / "RefactoringMiner-3.0.11"
@@ -29,9 +13,6 @@ RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 FINAL_OUTPUT = RESULTS_DIR / "refminer_all_baseline.json"
 
-# --------------------------------------------------------------------
-# REFACTORINGMINER COMMAND TEMPLATE
-# --------------------------------------------------------------------
 REFMINER_CMD_BASE = [
     "java", "-cp",
     f"{REFMINER_BIN}/bin;{REFMINER_BIN}/lib/*",
@@ -39,33 +20,25 @@ REFMINER_CMD_BASE = [
     "-c"
 ]
 
-# --------------------------------------------------------------------
-# LOAD DATA
-# --------------------------------------------------------------------
-print(f"📦 Loading baseline commits from {DATA_PATH}")
+print(f"Loading baseline commits from {DATA_PATH}")
 df = pd.read_parquet(DATA_PATH)
 num_prs = df["pr_id"].nunique()
 num_repos = df["full_name"].nunique()
 print(f"Loaded {len(df)} commits from {num_prs} PRs across {num_repos} repos.")
 
-# --------------------------------------------------------------------
-# COUNTERS
-# --------------------------------------------------------------------
+#Counters
 successful_commits = 0
 failed_commits = []
 successful_repos = set()
 all_results = []
 
-# --------------------------------------------------------------------
-# MAIN LOOP
-# --------------------------------------------------------------------
 for _, row in tqdm(df.iterrows(), total=len(df), desc="Analyzing commits"):
     repo_name = row["full_name"].split("/")[-1]
     repo_path = REPOS_DIR / repo_name
     sha = row["sha"]
 
     if not repo_path.exists():
-        print(f"⚠️ Missing repo: {repo_name}, skipping {sha[:8]}")
+        print(f"Missing repo: {repo_name}, skipping {sha[:8]}")
         continue
 
     temp_json = RESULTS_DIR / "temp_commit.json"
@@ -89,16 +62,11 @@ for _, row in tqdm(df.iterrows(), total=len(df), desc="Analyzing commits"):
         print(f"❌ Failed for {repo_name} ({sha[:8]})")
         continue
 
-# --------------------------------------------------------------------
-# SAVE RESULTS
-# --------------------------------------------------------------------
-print("\n💾 Writing combined JSON output...")
 with open(FINAL_OUTPUT, "w", encoding="utf-8") as f:
     json.dump({"commits": all_results}, f, indent=2)
 
-print("\n📊 SUMMARY")
-print(f"✅ Total successful commits: {successful_commits}")
-print(f"✅ Total repositories analyzed: {len(successful_repos)}")
-print(f"❌ Total failed commits: {len(failed_commits)}")
-print(f"💾 Results saved to {FINAL_OUTPUT}")
-print("🏁 Baseline RefactoringMiner analysis completed.")
+#Summary
+print(f"Total successful commits: {successful_commits}")
+print(f"Total repositories analyzed: {len(successful_repos)}")
+print(f"Total failed commits: {len(failed_commits)}")
+print(f"Results saved to {FINAL_OUTPUT}")

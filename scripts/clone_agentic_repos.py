@@ -1,14 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-fetch_and_clone_forks.py
-------------------------
-Fetches fork source repositories for Java PRs via the GitHub API
-and immediately clones all unique forks into repos_forks/.
-
-No intermediate parquet file is created.
-"""
-
 import os
 import time
 import subprocess
@@ -17,9 +6,6 @@ import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
 
-# --------------------------------------------------------------------
-# CONFIGURATION
-# --------------------------------------------------------------------
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_RAW = PROJECT_ROOT / "data" / "raw"
 DATA_PROCESSED = PROJECT_ROOT / "data" / "processed"
@@ -33,27 +19,21 @@ JAVA_COMMITS = DATA_PROCESSED / "agentic_pr_commits.parquet"
 
 TOKEN = os.getenv("GITHUB_TOKEN")
 if not TOKEN:
-    raise EnvironmentError("❌ Please set GITHUB_TOKEN in your environment.")
+    raise EnvironmentError("Please set GITHUB_TOKEN in your environment.")
 
 HEADERS = {"Authorization": f"token {TOKEN}"}
 
-# --------------------------------------------------------------------
-# LOAD DATA
-# --------------------------------------------------------------------
-print("📦 Loading PR and commit data...")
+print("Loading PR and commit data...")
 pulls = pd.read_parquet(PULL_REQUESTS)
 java_commits = pd.read_parquet(JAVA_COMMITS)
 
 java_pr_ids = set(java_commits["pr_id"].unique())
 pulls = pulls[pulls["id"].isin(java_pr_ids)]
-print(f"✅ Found {len(pulls)} matching Java PRs across {pulls['repo_url'].nunique()} repos.")
+print(f"Found {len(pulls)} matching Java PRs across {pulls['repo_url'].nunique()} repos.")
 
-# --------------------------------------------------------------------
-# FETCH FORK INFO
-# --------------------------------------------------------------------
+#Fork data
 def fetch_fork_info(repo_url: str, pr_number: int):
     """Return the fork repo URL for a given PR via GitHub API."""
-    # Handle both API and web repo URLs
     if "api.github.com/repos/" in repo_url:
         repo_path = repo_url.split("api.github.com/repos/")[-1].rstrip("/")
     else:
@@ -64,7 +44,7 @@ def fetch_fork_info(repo_url: str, pr_number: int):
     try:
         r = requests.get(url, headers=HEADERS)
         if r.status_code == 403:
-            print("⏳ Rate limited, sleeping 60s...")
+            print("Rate limited, sleeping 60s...")
             time.sleep(60)
             return None
         r.raise_for_status()
@@ -72,12 +52,10 @@ def fetch_fork_info(repo_url: str, pr_number: int):
         head_repo = data.get("head", {}).get("repo", {})
         return head_repo.get("clone_url")
     except Exception as e:
-        print(f"⚠️ {repo_url}#{pr_number} failed: {e}")
+        print(f"{repo_url}#{pr_number} failed: {e}")
         return None
 
-# --------------------------------------------------------------------
-# FETCH AND CLONE
-# --------------------------------------------------------------------
+#Fetch
 results = []
 for _, row in tqdm(pulls.iterrows(), total=len(pulls), desc="Fetching forks"):
     fork_url = fetch_fork_info(row["repo_url"], int(row["number"]))
@@ -85,22 +63,20 @@ for _, row in tqdm(pulls.iterrows(), total=len(pulls), desc="Fetching forks"):
         continue
     results.append(fork_url)
 
-# Deduplicate forks before cloning
+# Deduplicate forks
 forks = sorted(set(results))
-print(f"🔗 Found {len(forks)} unique fork repos to clone.")
+print(f"Found {len(forks)} unique fork repos to clone.")
 
-# --------------------------------------------------------------------
-# CLONE REPOSITORIES
-# --------------------------------------------------------------------
+#Clone
 for url in tqdm(forks, desc="Cloning forks"):
     name = url.rstrip("/").split("/")[-1].replace(".git", "")
     dest = CLONE_DIR / name
     if dest.exists():
-        print(f"⏩ Skipping existing repo: {name}")
+        print(f"Skipping existing repo: {name}")
         continue
     try:
         subprocess.run(["git", "clone", url, str(dest)], check=True)
     except subprocess.CalledProcessError:
-        print(f"❌ Failed to clone {url}")
+        print(f"Failed to clone {url}")
 
-print("✅ All fork repositories cloned successfully.")
+print("All fork repositories cloned successfully.")
