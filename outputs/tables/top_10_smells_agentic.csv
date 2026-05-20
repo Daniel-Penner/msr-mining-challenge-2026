@@ -1,0 +1,11 @@
+smell_type,count
+Magic Number,123869
+Long Statement,28968
+Missing assertion,7553
+Long Identifier,6641
+Complex Conditional,6056
+Unutilized Abstraction,3404
+Complex Method,2971
+Assertion roulette,2715
+Long Parameter List,1567
+Unnecessary Abstraction,1508

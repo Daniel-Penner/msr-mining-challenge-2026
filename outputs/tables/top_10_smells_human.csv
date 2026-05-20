@@ -1,0 +1,11 @@
+smell_type,count
+Magic Number,32332
+Long Statement,13147
+Unutilized Abstraction,11242
+Unnecessary Abstraction,4741
+Complex Method,2649
+Deficient Encapsulation,2616
+Complex Conditional,2515
+Global State,2047
+Long Identifier,1948
+Long Parameter List,1923

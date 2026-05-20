@@ -1,0 +1,11 @@
+smell_type,count,percentage
+Assertion roulette,15,14.56
+Long Statement,8,7.77
+Unnecessary Abstraction,8,7.77
+Missing assertion,6,5.83
+Complex Method,6,5.83
+Complex Conditional,6,5.83
+Feature Concentration,5,4.85
+Long Parameter List,5,4.85
+Exceptional handling,4,3.88
+Empty catch clause,4,3.88

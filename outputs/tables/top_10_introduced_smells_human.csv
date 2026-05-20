@@ -1,0 +1,11 @@
+smell_type,count,percentage
+Long Statement,25,7.76
+Deficient Encapsulation,25,7.76
+Magic Number,24,7.45
+Feature Concentration,20,6.21
+Unnecessary Abstraction,19,5.9
+Long Parameter List,17,5.28
+Broken Hierarchy,16,4.97
+Complex Method,16,4.97
+Insufficient Modularization,16,4.97
+Long Identifier,15,4.66
