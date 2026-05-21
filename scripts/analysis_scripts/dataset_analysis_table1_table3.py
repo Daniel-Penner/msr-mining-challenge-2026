@@ -57,6 +57,8 @@ def load_and_fix_counts():
     agentic_events = ensure_sha_column(agentic_events, "agentic_events")
     human_events = ensure_sha_column(human_events, "human_events")
 
+    human_commits = human_commits.drop_duplicates(subset=["sha"])
+
 
     agent_counts = agentic_events.groupby("sha").size().reset_index(name="true_count")
     human_counts = human_events.groupby("sha").size().reset_index(name="true_count")
@@ -94,8 +96,9 @@ for agent, group in df.groupby("agent", dropna=False):
     
     ref_only_data = group[group["has_refactoring"]]["refactoring_count"].values
     mean_val = np.mean(ref_only_data) if len(ref_only_data) > 0 else 0
+    std_val = np.std(ref_only_data, ddof=1) if len(ref_only_data) > 1 else 0
     mean_low, mean_high = bootstrap_mean(ref_only_data)
-    
+
     summary_rows.append({
         "Agent": agent,
         "Total Commits": total_commits,
@@ -104,6 +107,7 @@ for agent, group in df.groupby("agent", dropna=False):
         "Ref. Rate %": round(ref_commits_count / total_commits * 100, 2),
         "Rate 95% CI": f"[{rate_low:.2f}, {rate_high:.2f}]",
         "Mean Ref/Commit": round(mean_val, 2),
+        "SD": round(std_val, 2),
         "Mean 95% CI": f"[{mean_low:.2f}, {mean_high:.2f}]",
         "Median": int(np.median(ref_only_data)) if len(ref_only_data) > 0 else 0,
         "Max": int(np.max(ref_only_data)) if len(ref_only_data) > 0 else 0
@@ -112,7 +116,7 @@ for agent, group in df.groupby("agent", dropna=False):
 df_ci_summary = pd.DataFrame(summary_rows)
 df_ci_summary.to_csv(TABLES_DIR / "per_agent_statistical_summary_FINAL.csv", index=False)
 
-print("\nTable: Corrected Statistical Summary")
+print("\nTable: Statistical Summary")
 print(df_ci_summary.to_string(index=False))
 
 
